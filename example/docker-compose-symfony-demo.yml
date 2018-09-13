@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+#  mariadb:
+  symfony-demo_mariadb:
+    container_name: symfony-demo_mariadb_1
+    image: mariadb
+    environment:
+    - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    network_mode: "bridge"

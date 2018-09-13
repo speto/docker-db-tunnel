@@ -7,6 +7,7 @@ RESTORE=$(echo -en '\033[0m')
 test -f .env && source .env
 
 DB_TUNNEL_NETWORK=${DB_TUNNEL_NETWORK:-'db-tunnel-network'}
+DB_TUNNEL_NETWORK_HOSTNAME_LABEL=${DB_TUNNEL_NETWORK_HOSTNAME_LABEL:-'db.network.tunnel.hostname'}
 DB_TUNNEL_CONTAINER_NAME=${DB_TUNNEL_CONTAINER_NAME:-'db-tunnel-sshd'}
 DB_TUNNEL_CONTAINER_PORT=${DB_TUNNEL_CONTAINER_PORT:-'22666'}
 DB_CONTAINER_NAME_PATTERN=${DB_CONTAINER_NAME_PATTERN:-'mariadb|mysql'}
@@ -21,7 +22,7 @@ fi
 # return true/false or error if not exist
 IS_TUNNEL_CONTAINER_RUNNING=$(docker inspect -f "{{.State.Running}}" ${DB_TUNNEL_CONTAINER_NAME} 2> /dev/null)
 if [ "$IS_TUNNEL_CONTAINER_RUNNING" == "" ]; then
-    echo "Running db tunnel container with name: ${GREEN}${DB_TUNNEL_CONTAINER_NAME}${RESTORE}"
+    echo "Running db tunnel container ${GREEN}${DB_TUNNEL_CONTAINER_NAME}${RESTORE} on port ${GREEN}${DB_TUNNEL_CONTAINER_PORT}${RESTORE}"
     docker run -d -p ${DB_TUNNEL_CONTAINER_PORT}:22 --restart=always --name ${DB_TUNNEL_CONTAINER_NAME} --network ${DB_TUNNEL_NETWORK} sickp/alpine-sshd
 elif [ "$IS_TUNNEL_CONTAINER_RUNNING" == "false" ]; then
     echo "Starting existing db tunnel container with name: ${GREEN}${DB_TUNNEL_CONTAINER_NAME}${RESTORE}"
@@ -29,10 +30,15 @@ elif [ "$IS_TUNNEL_CONTAINER_RUNNING" == "false" ]; then
 fi
 
 # @todo consider filter by label (e.g. label=db.network.tunnel, label=database, label=mysql)
-docker ps --filter "status=running" --filter "name=${DB_CONTAINER_NAME_PATTERN}" --format "{{.Names}} {{.Networks}}" \
+docker ps --filter "status=running" --filter "name=${DB_CONTAINER_NAME_PATTERN}" --format '{{.Names}} {{.Networks}} {{.Label "'${DB_TUNNEL_NETWORK_HOSTNAME_LABEL}'"}}' \
 | grep -v ${DB_TUNNEL_NETWORK} \
-| cut -d ' ' -f 1 \
-| while read container_name ; do
-    echo "Connecting ${YELLOW}${container_name}${RESTORE} to ${DB_TUNNEL_NETWORK}";
-    docker network connect ${DB_TUNNEL_NETWORK} ${container_name};
+| cut -d ' ' -f 1,3 \
+| while read container_name host_name; do
+    if [ "$host_name" == "" ]; then
+        echo "Connecting ${YELLOW}${container_name}${RESTORE} to ${DB_TUNNEL_NETWORK}";
+        docker network connect ${DB_TUNNEL_NETWORK} ${container_name};
+    else
+        echo "Connecting ${YELLOW}${container_name}${RESTORE} to ${DB_TUNNEL_NETWORK} with hostname (alias) ${YELLOW}${host_name}${RESTORE}";
+        docker network connect ${DB_TUNNEL_NETWORK} ${container_name}  --alias ${host_name};
+    fi
   done
