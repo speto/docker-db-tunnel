@@ -4,9 +4,8 @@ services:
 #  mysql:
   project_mysql:
     container_name: project_mysql_1
-    image: mariadb
+    image: bianjp/mariadb-alpine:latest
     environment:
     - MYSQL_ALLOW_EMPTY_PASSWORD=yes
     labels:
     - db.network.tunnel.hostname=project_db_host
-    network_mode: "bridge"

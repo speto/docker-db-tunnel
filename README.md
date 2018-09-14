@@ -1,5 +1,5 @@
 ![latest 0.2.0](https://img.shields.io/badge/latest-0.2.0-green.svg?style=flat)
-[![license](https://img.shields.io/github/license/webcore/snitcher.svg?maxAge=2592000)](https://opensource.org/licenses/MIT)
+[![license](https://img.shields.io/github/license/speto/docker-db-tunnel.svg?maxAge=2592000)](https://opensource.org/licenses/MIT)
 
 # Docker DB tunnel
 
@@ -12,7 +12,7 @@ It uses [sickp/alpine-sshd](https://hub.docker.com/r/sickp/alpine-sshd/) A light
 
 ## Install
 
-Download
+Download via
 
 ```shell
 git clone https://github.com/speto/docker-db-tunnel
@@ -20,7 +20,7 @@ git clone https://github.com/speto/docker-db-tunnel
 
 ## Usage
 
-Run shell script to create network, sshd container and connect all db containers:
+Run shell script to create sshd container, network and connect sshd and all db containers:
 
 ```shell
 $ ./docker-db-tunnel.sh
@@ -35,17 +35,19 @@ Connecting project_mysql_1 to db-tunnel-network with hostname (alias) project_db
 
 ### Docker-compose services example
 
+Uses [bianjp/mariadb-alpine](https://hub.docker.com/r/bianjp/mariadb-alpine/) Lightweight MariaDB docker image based on Alpine Linux.  
+Fully compatible with [official MariaDB image](https://hub.docker.com/_/mariadb/)
+
 docker-compose-project.yml
 ```yaml
 services:
   project_mysql:
     container_name: project_mysql_1
-    image: mariadb
+    image: bianjp/mariadb-alpine:latest
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
     labels:
       - db.network.tunnel.hostname=project_db_host
-    network_mode: "bridge"
 ```
 
 docker-compose-symfony-demo.yml
@@ -53,10 +55,9 @@ docker-compose-symfony-demo.yml
 services:
   symfony-demo_mariadb:
     container_name: symfony-demo_mariadb_1
-    image: mariadb
+    image: bianjp/mariadb-alpine:latest
     environment:
     - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-    network_mode: "bridge"
 ```
 
 ### SSH Tunnel settings

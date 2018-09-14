@@ -4,7 +4,6 @@ services:
 #  mariadb:
   symfony-demo2_mariadb:
     container_name: symfony-demo2_mariadb_1
-    image: mariadb
+    image: bianjp/mariadb-alpine:latest
     environment:
     - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-    network_mode: "bridge"
