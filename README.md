@@ -20,7 +20,19 @@ git clone https://github.com/speto/docker-db-tunnel
 
 ## Usage
 
-Run shell script to create sshd container, network and connect sshd and all db containers:
+Start some example dummy mariadb containers from multiple compose files.  
+More details in [./example/ folder](./example/) or next sectiion about [docker-compose services example](#docker-compose-services-example):
+
+```shell
+$ cd ./example
+$ docker-compose up -d
+Creating network "docker-db-tunnel-example_default" with the default driver
+Creating symfony-demo_mariadb_1  ... done
+Creating symfony-demo2_mariadb_1 ... done
+Creating project_mysql_1         ... done
+```
+
+Run `./docker-db-tunnel.sh` shell script to create `sshd` container, tunnel network and connect `sshd` and all (database) containers with name matching `mariadb|mysql` pattern (customizable by `DB_CONTAINER_NAME_PATTERN`):
 
 ```shell
 $ ./docker-db-tunnel.sh
@@ -39,7 +51,8 @@ Connecting project_mysql_1 to db-tunnel-network with hostname (alias) project_db
 Uses [bianjp/mariadb-alpine](https://hub.docker.com/r/bianjp/mariadb-alpine/) Lightweight MariaDB docker image based on Alpine Linux.  
 Fully compatible with [official MariaDB image](https://hub.docker.com/_/mariadb/)
 
-docker-compose-project.yml
+[./example/docker-compose-project.yml](./example/docker-compose-project.yml)  
+
 ```yaml
 services:
   project_mysql:
@@ -50,8 +63,9 @@ services:
     labels:
       - db.network.tunnel.hostname=project_db_host
 ```
+- You can set the stable hostname via `db.network.tunnel.hostname` container label which is later used as the network connection alias
 
-docker-compose-symfony-demo.yml
+[./example/docker-compose-symfony-demo.yml](./example/docker-compose-symfony-demo.yml)
 ```yaml
 services:
   symfony-demo_mariadb:
@@ -62,15 +76,16 @@ services:
 ```
 
 ### SSH Tunnel settings
-The **root** password for SSH is in `sickp/alpine-sshd` "**root**".  
+
+The **root** password for SSH in `sickp/alpine-sshd` is "**root**".  
 You can also [change default root password](https://github.com/sickp/docker-alpine-sshd#change-root-password).
 
-### Connection settings example
+### Database connection settings example
 
 ```
-MySQL host: project_mysql_1 
-# or via alias 
-# MySQL host: project_db_host
+MySQL host: project_mysql_1
+# or stable hostname via container label and network connection alias:  
+MySQL host: project_db_host
 Username: root
 Port: 3306
 
@@ -84,7 +99,7 @@ SSH Port: 22666
 
 ## Customize
 
-It is easy to extend via your own .env file:
+It is easy to extend via your own [.env](.env.dist) file:
 
 ```dotenv
 DB_TUNNEL_NETWORK=db-tunnel-network
