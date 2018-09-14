@@ -38,16 +38,19 @@ then
     docker network connect ${DB_TUNNEL_NETWORK} ${DB_TUNNEL_CONTAINER_NAME};
 fi
 
+# connect running db containers to network if not connected
 # @todo consider filter by label (e.g. label=db.network.tunnel, label=database, label=mysql)
-docker ps --filter "status=running" --filter "name=${DB_CONTAINER_NAME_PATTERN}" --format '{{.Names}} {{.Networks}} {{.Label "'${DB_TUNNEL_NETWORK_HOSTNAME_LABEL}'"}}' \
-| grep -v ${DB_TUNNEL_NETWORK} \
+docker ps --filter "status=running" --filter "name=${DB_CONTAINER_NAME_PATTERN}" --format '{{.ID}} {{.Networks}} {{.Label "'${DB_TUNNEL_NETWORK_HOSTNAME_LABEL}'"}}' \
+| grep -v "${DB_TUNNEL_NETWORK}" \
 | cut -d ' ' -f 1,3 \
-| while read container_name host_name; do
+| while read container_id host_name; do
+    # sed to fix forward slash in name
+    NAME=$(docker inspect --format="{{.Name}}" ${container_id} | sed "s#^/##");
     if [ "$host_name" == "" ]; then
-        echo "Connecting ${YELLOW}${container_name}${RESTORE} to ${DB_TUNNEL_NETWORK}";
-        docker network connect ${DB_TUNNEL_NETWORK} ${container_name};
+        echo "Connecting ${YELLOW}${NAME}${RESTORE} to ${DB_TUNNEL_NETWORK}";
+        docker network connect ${DB_TUNNEL_NETWORK} ${container_id};
     else
-        echo "Connecting ${YELLOW}${container_name}${RESTORE} to ${DB_TUNNEL_NETWORK} with hostname (alias) ${YELLOW}${host_name}${RESTORE}";
-        docker network connect ${DB_TUNNEL_NETWORK} ${container_name}  --alias ${host_name};
+        echo "Connecting ${YELLOW}${NAME}${RESTORE} to ${DB_TUNNEL_NETWORK} with hostname (alias) ${YELLOW}${host_name}${RESTORE}";
+        docker network connect ${DB_TUNNEL_NETWORK} ${container_id}  --alias ${host_name};
     fi
   done

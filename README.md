@@ -1,4 +1,4 @@
-![latest 0.2.0](https://img.shields.io/badge/latest-0.2.0-green.svg?style=flat)
+![latest 0.3.0](https://img.shields.io/badge/latest-0.3.0-green.svg?style=flat)
 [![license](https://img.shields.io/github/license/speto/docker-db-tunnel.svg?maxAge=2592000)](https://opensource.org/licenses/MIT)
 
 # Docker DB tunnel
