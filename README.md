@@ -24,10 +24,11 @@ Run shell script to create sshd container, network and connect sshd and all db c
 
 ```shell
 $ ./docker-db-tunnel.sh
-Creating db tunnel network: db-tunnel-network
-668e40197c800a612ea748b9778d3f0888333673f7588d4a0bb1e027bd5d22d4
 Running db tunnel container db-tunnel-sshd on port 22666
+668e40197c800a612ea748b9778d3f0888333673f7588d4a0bb1e027bd5d22d4
+Creating db tunnel network: db-tunnel-network
 164e5a3c3b446169f928a03c135594493843664fef5ffa3edf820dd5de06f0a1
+Connecting db-tunnel-sshd to db-tunnel-network
 Connecting symfony-demo_mariadb_1 to db-tunnel-network
 Connecting symfony-demo2_mariadb_1 to db-tunnel-network
 Connecting project_mysql_1 to db-tunnel-network with hostname (alias) project_db_host
