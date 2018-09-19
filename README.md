@@ -1,5 +1,10 @@
-![latest 0.3.0](https://img.shields.io/badge/latest-0.3.0-green.svg?style=flat)
-[![license](https://img.shields.io/github/license/speto/docker-db-tunnel.svg?maxAge=2592000)](https://opensource.org/licenses/MIT)
+![latest master](https://img.shields.io/badge/latest-master-green.svg?style=flat)
+[![GitHub tags](https://img.shields.io/github/tag/speto/docker-db-tunnel.svg)](https://github.com/speto/docker-db-tunnel/tags)
+[![GitHub releases](https://img.shields.io/github/release/speto/docker-db-tunnel.svg)](https://github.com/speto/docker-db-tunnel/releases)
+[![GitHub stars](https://img.shields.io/github/stars/speto/docker-db-tunnel.svg)](https://github.com/speto/docker-db-tunnel/stargazers)
+[![GitHub license](https://img.shields.io/github/license/speto/docker-db-tunnel.svg)](https://github.com/speto/docker-db-tunnel/blob/master/LICENSE)
+[![Twitter](https://img.shields.io/twitter/url/https/github.com/speto/docker-db-tunnel.svg?style=social)](https://twitter.com/intent/tweet?text=Avoid%20an%20exposed%20container%20port%20conflicts%20when%20using%20databases%20in%20multiple%20docker%20projects%20during%20development%20on%20localhost%20%23docker%20%23dockerDBtunnel&url=https%3A%2F%2Fgithub.com%2Fspeto%2Fdocker-db-tunnel)
+
 
 # Docker DB tunnel
 
